@@ -1,6 +1,6 @@
 export const ENV = {
-  appId: process.env.VITE_APP_ID ?? "",
-  cookieSecret: process.env.JWT_SECRET ?? "",
+  appId: process.env.VITE_APP_ID ?? process.env.GITHUB_CLIENT_ID ?? "",
+  cookieSecret: process.env.JWT_SECRET ?? process.env.GITHUB_CLIENT_SECRET ?? "default-secret-key-for-jwt",
   databaseUrl: process.env.DATABASE_URL ?? "",
   oAuthServerUrl: process.env.OAUTH_SERVER_URL ?? "",
   ownerOpenId: process.env.OWNER_OPEN_ID ?? "",
