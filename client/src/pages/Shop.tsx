@@ -11,98 +11,8 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 
-const fallbackProducts = [
-  {
-    id: 1,
-    name: "Susurro Púrpura",
-    category: "toys" as const,
-    price: 1299,
-    rating: 5,
-    reviews: 128,
-    images: JSON.stringify(["bg-gradient-to-tr from-purple-900 to-indigo-900"]),
-    tag: "Best Seller",
-    description: null,
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 2,
-    name: "Aceite de Masaje Sensual",
-    category: "oils" as const,
-    price: 450,
-    rating: 5,
-    reviews: 85,
-    images: JSON.stringify(["bg-gradient-to-tr from-amber-700 to-orange-900"]),
-    tag: "Nuevo",
-    description: null,
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 3,
-    name: "Conjunto de Encaje Negro",
-    category: "lingerie" as const,
-    price: 899,
-    rating: 5,
-    reviews: 210,
-    images: JSON.stringify(["bg-gradient-to-tr from-neutral-800 to-neutral-950"]),
-    tag: null,
-    description: null,
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 4,
-    name: "Kit Parejas Aventureras",
-    category: "kits" as const,
-    price: 2100,
-    rating: 5,
-    reviews: 45,
-    images: JSON.stringify(["bg-gradient-to-tr from-pink-900 to-rose-900"]),
-    tag: "Oferta",
-    description: null,
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 5,
-    name: "Vibrador Clásico",
-    category: "toys" as const,
-    price: 950,
-    rating: 5,
-    reviews: 92,
-    images: JSON.stringify(["bg-gradient-to-tr from-violet-900 to-fuchsia-900"]),
-    tag: null,
-    description: null,
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 6,
-    name: "Vela de Masaje",
-    category: "oils" as const,
-    price: 380,
-    rating: 5,
-    reviews: 34,
-    images: JSON.stringify(["bg-gradient-to-tr from-red-900 to-orange-800"]),
-    tag: null,
-    description: null,
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+// No fallback products - only show products from database
+const fallbackProducts: any[] = [];
 
 type SortOption = "relevancia" | "precio-asc" | "precio-desc" | "rating" | "nuevos" | "populares";
 
@@ -139,7 +49,7 @@ const isImageUrl = (str: string): boolean => str.startsWith("http") || str.start
 export default function Shop() {
   const { addToCart, totalItems } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
-  const [products, setProducts] = useState(fallbackProducts);
+  const [products, setProducts] = useState<any[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("relevancia");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -147,7 +57,7 @@ export default function Shop() {
   const { data: dbProducts } = trpc.products.list.useQuery();
 
   useEffect(() => {
-    if (dbProducts && dbProducts.length > 0) {
+    if (dbProducts) {
       setProducts(dbProducts);
     }
   }, [dbProducts]);

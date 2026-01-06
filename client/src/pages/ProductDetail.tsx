@@ -11,98 +11,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import ShareButtons from "@/components/ShareButtons";
 
-const fallbackProducts = [
-  {
-    id: 1,
-    name: "Susurro Púrpura",
-    category: "toys" as const,
-    price: 1299,
-    rating: 5,
-    reviews: 128,
-    images: JSON.stringify(["bg-gradient-to-tr from-purple-900 to-indigo-900"]),
-    tag: "Best Seller",
-    description: "Una experiencia sensorial única diseñada para el placer consciente. Fabricado con materiales de grado médico, este producto combina elegancia y funcionalidad.",
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 2,
-    name: "Aceite de Masaje Sensual",
-    category: "oils" as const,
-    price: 450,
-    rating: 5,
-    reviews: 85,
-    images: JSON.stringify(["bg-gradient-to-tr from-amber-700 to-orange-900"]),
-    tag: "Nuevo",
-    description: "Aceite aromático de alta calidad para masajes sensuales. Formulado con ingredientes naturales que nutren la piel mientras despiertan los sentidos.",
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 3,
-    name: "Conjunto de Encaje Negro",
-    category: "lingerie" as const,
-    price: 899,
-    rating: 5,
-    reviews: 210,
-    images: JSON.stringify(["bg-gradient-to-tr from-neutral-800 to-neutral-950"]),
-    tag: null,
-    description: "Lencería elegante y sofisticada que realza la figura. Confeccionada con encaje francés de primera calidad para una experiencia de lujo.",
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 4,
-    name: "Kit Parejas Aventureras",
-    category: "kits" as const,
-    price: 2100,
-    rating: 5,
-    reviews: 45,
-    images: JSON.stringify(["bg-gradient-to-tr from-pink-900 to-rose-900"]),
-    tag: "Oferta",
-    description: "Kit completo diseñado para parejas que buscan explorar nuevas experiencias juntas. Incluye múltiples accesorios y una guía ilustrada.",
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 5,
-    name: "Vibrador Clásico",
-    category: "toys" as const,
-    price: 950,
-    rating: 5,
-    reviews: 92,
-    images: JSON.stringify(["bg-gradient-to-tr from-violet-900 to-fuchsia-900"]),
-    tag: null,
-    description: "Diseño clásico y atemporal con tecnología moderna. Múltiples velocidades y patrones de vibración para personalizar tu experiencia.",
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 6,
-    name: "Vela de Masaje",
-    category: "oils" as const,
-    price: 380,
-    rating: 5,
-    reviews: 34,
-    images: JSON.stringify(["bg-gradient-to-tr from-red-900 to-orange-800"]),
-    tag: null,
-    description: "Vela aromática que se convierte en aceite de masaje tibio. Aroma envolvente y textura sedosa para momentos de relajación profunda.",
-    stock: 10,
-    active: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+// No fallback products - only show products from database
 
 const categoryLabels = {
   toys: "Juguetes",
@@ -137,8 +46,8 @@ export default function ProductDetail() {
   // Load products from database
   const { data: dbProducts, isLoading } = trpc.products.list.useQuery();
   
-  // Use database products if available, otherwise use fallback
-  const products = dbProducts && dbProducts.length > 0 ? dbProducts : fallbackProducts;
+  // Use database products only
+  const products = dbProducts || [];
   
   const product = products.find(p => p.id === productId);
 
