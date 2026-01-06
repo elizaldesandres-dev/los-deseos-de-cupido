@@ -46,7 +46,7 @@ export default function CartSheet({ trigger, compact = false }: CartSheetProps) 
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md flex flex-col h-full overflow-hidden p-0">
+      <SheetContent className="w-full sm:max-w-md flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden p-0">
         <SheetHeader className="px-6 pt-6 pb-4 border-b">
           <SheetTitle className="font-serif text-2xl">
             {showShippingForm ? "Datos de Envío" : `Tu Carrito (${totalItems})`}
@@ -65,8 +65,8 @@ export default function CartSheet({ trigger, compact = false }: CartSheetProps) 
             </Button>
           </div>
         ) : !showShippingForm ? (
-          <div className="flex flex-col h-full overflow-hidden">
-            <ScrollArea className="flex-1 min-h-0">
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <ScrollArea className="flex-1 h-0">
               <div className="space-y-4 py-6 px-6">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-4 pb-4 border-b last:border-b-0">
@@ -134,8 +134,8 @@ export default function CartSheet({ trigger, compact = false }: CartSheetProps) 
             </div>
           </div>
         ) : (
-          <div className="flex flex-col h-full overflow-hidden">
-            <ScrollArea className="flex-1 min-h-0">
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <ScrollArea className="flex-1 h-0">
               <div className="py-6 px-6 space-y-4">
                 <ShippingForm />
               </div>
