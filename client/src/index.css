@@ -1,0 +1,207 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Montserrat", sans-serif;
+  --font-serif: "Playfair Display", serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  /* Neo-Noir Palette - Light Mode (Not primary, but defined for safety) */
+  --primary: oklch(0.35 0.15 290); /* Deep Purple */
+  --primary-foreground: oklch(0.98 0.02 320); /* Pale Pink */
+  --sidebar-primary: oklch(0.35 0.15 290);
+  --sidebar-primary-foreground: oklch(0.98 0.02 320);
+  
+  --chart-1: oklch(0.35 0.15 290); /* Purple */
+  --chart-2: oklch(0.90 0.05 340); /* Soft Pink */
+  --chart-3: oklch(0.20 0.05 290); /* Dark Purple */
+  --chart-4: oklch(0.60 0.15 320); /* Magenta */
+  --chart-5: oklch(0.10 0.02 290); /* Almost Black */
+
+  --radius: 0.5rem;
+
+  --background: oklch(0.98 0.01 320); /* Very light pinkish white */
+  --foreground: oklch(0.15 0.02 290); /* Dark purple-black */
+  
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.02 290);
+  
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.02 290);
+  
+  --secondary: oklch(0.95 0.02 320);
+  --secondary-foreground: oklch(0.35 0.15 290);
+  
+  --muted: oklch(0.95 0.01 290);
+  --muted-foreground: oklch(0.50 0.05 290);
+  
+  --accent: oklch(0.95 0.03 320);
+  --accent-foreground: oklch(0.35 0.15 290);
+  
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  
+  --border: oklch(0.90 0.02 320);
+  --input: oklch(0.90 0.02 320);
+  --ring: oklch(0.35 0.15 290);
+  
+  --sidebar: oklch(0.98 0.01 320);
+  --sidebar-foreground: oklch(0.15 0.02 290);
+  --sidebar-accent: oklch(0.95 0.03 320);
+  --sidebar-accent-foreground: oklch(0.35 0.15 290);
+  --sidebar-border: oklch(0.90 0.02 320);
+  --sidebar-ring: oklch(0.35 0.15 290);
+}
+
+.dark {
+  /* Neo-Noir Palette - Dark Mode (Primary Experience) */
+  --primary: oklch(0.45 0.18 290); /* Rich Purple */
+  --primary-foreground: oklch(0.98 0.02 320); /* Pale Pink Text */
+  
+  --sidebar-primary: oklch(0.45 0.18 290);
+  --sidebar-primary-foreground: oklch(0.98 0.02 320);
+
+  --background: oklch(0.12 0.02 280); /* Deep Charcoal/Black */
+  --foreground: oklch(0.95 0.02 320); /* Off-white with pink tint */
+  
+  --card: oklch(0.15 0.03 280 / 0.7); /* Glassmorphism base */
+  --card-foreground: oklch(0.95 0.02 320);
+  
+  --popover: oklch(0.15 0.03 280);
+  --popover-foreground: oklch(0.95 0.02 320);
+  
+  --secondary: oklch(0.20 0.05 290);
+  --secondary-foreground: oklch(0.90 0.05 320);
+  
+  --muted: oklch(0.20 0.02 280);
+  --muted-foreground: oklch(0.70 0.05 290);
+  
+  --accent: oklch(0.25 0.10 290);
+  --accent-foreground: oklch(0.98 0.02 320);
+  
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  
+  --border: oklch(0.30 0.05 290 / 0.3);
+  --input: oklch(0.20 0.02 280);
+  --ring: oklch(0.45 0.18 290);
+  
+  --chart-1: oklch(0.45 0.18 290); /* Purple */
+  --chart-2: oklch(0.85 0.10 330); /* Pink */
+  --chart-3: oklch(0.30 0.10 280); /* Deep Violet */
+  --chart-4: oklch(0.60 0.20 300); /* Magenta */
+  --chart-5: oklch(0.20 0.02 280); /* Charcoal */
+  
+  --sidebar: oklch(0.12 0.02 280);
+  --sidebar-foreground: oklch(0.95 0.02 320);
+  --sidebar-accent: oklch(0.20 0.05 290);
+  --sidebar-accent-foreground: oklch(0.98 0.02 320);
+  --sidebar-border: oklch(0.30 0.05 290 / 0.3);
+  --sidebar-ring: oklch(0.45 0.18 290);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/30 selection:text-primary-foreground;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-medium tracking-tight;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 1280px;
+    }
+  }
+  
+  /* Custom Utilities for Neo-Noir Style */
+  .glass-panel {
+    @apply bg-card/60 backdrop-blur-md border border-white/10 shadow-xl;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-300 to-purple-400;
+  }
+  
+  .glow-text {
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  }
+}
