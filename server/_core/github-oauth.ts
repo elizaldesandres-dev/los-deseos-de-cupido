@@ -16,7 +16,9 @@ function getQueryParam(req: Request, key: string): string | undefined {
 export function registerGitHubOAuthRoutes(app: Express) {
   // Redirect to GitHub for authentication
   app.get("/api/oauth/github/login", (req: Request, res: Response) => {
-    const redirectUri = `${req.protocol}://${req.get("host")}/api/oauth/callback`;
+    // Always use HTTPS in production
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : req.protocol;
+    const redirectUri = `${protocol}://${req.get("host")}/api/oauth/callback`;
     const scope = "read:user user:email";
     
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`;
