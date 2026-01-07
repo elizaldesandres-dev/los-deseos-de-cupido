@@ -271,7 +271,7 @@ export default function AdminProductForm({ productId, onSuccess, onCancel }: Adm
               ))}
             </div>
             <p className="text-sm text-muted-foreground">
-              Formatos: JPG, PNG. Máximo 5MB por imagen. La primera imagen será la principal.
+              Formatos: JPG, PNG, JPEG, WEBP y otros formatos de imagen. Máximo 5MB por imagen. La primera imagen será la principal.
             </p>
           </div>
 
