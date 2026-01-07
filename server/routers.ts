@@ -174,3 +174,7 @@ export const appRouter = router({
         const dataUrl = `data:${input.mimeType};base64,${input.fileData}`;
         return { url: dataUrl, key: input.fileName };
       }),
+  }),
+});
+
+export type AppRouter = typeof appRouter;
