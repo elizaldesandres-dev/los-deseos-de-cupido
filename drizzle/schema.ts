@@ -36,7 +36,7 @@ export const products = mysqlTable("products", {
   rating: int("rating").default(5).notNull(),
   reviews: int("reviews").default(0).notNull(),
   images: longtext("images").notNull(), // JSON array of Base64 images or URLs
-  tag: varchar("tag", { length: 50 }), // Optional tag like "Best Seller", "New", etc.
+  tag: text("tag"), // Optional tag like "Best Seller", "New", etc.
   description: text("description"), // Optional detailed description
   stock: int("stock").default(0).notNull(), // Inventory count
   active: int("active").default(1).notNull(), // 1 = active, 0 = inactive
