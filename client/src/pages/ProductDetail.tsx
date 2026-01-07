@@ -22,24 +22,25 @@ const categoryLabels = {
 
 // Helper function to parse images from JSON
 const parseImages = (imagesJson: string): string[] => {
+  if (!imagesJson || typeof imagesJson !== 'string') return [];
+  
   try {
+    // Intentar parsear como JSON array
     const images = JSON.parse(imagesJson);
     if (Array.isArray(images)) {
       // Filtrar imágenes válidas (URLs o Base64)
-      return images.filter(img => img && (img.startsWith('http') || img.startsWith('data:image')));
+      const validImages = images.filter(img => 
+        img && typeof img === 'string' && (img.startsWith('http') || img.startsWith('data:image'))
+      );
+      return validImages.length > 0 ? validImages : [];
     }
-    // Si es una URL o Base64 válida, devolverla
-    if (imagesJson && (imagesJson.startsWith('http') || imagesJson.startsWith('data:image'))) {
+  } catch (e) {
+    // Si no es JSON, intentar usar directamente como URL/Base64
+    if (imagesJson.startsWith('http') || imagesJson.startsWith('data:image')) {
       return [imagesJson];
     }
-    return [];
-  } catch {
-    // Si es una URL o Base64 válida, devolverla
-    if (imagesJson && (imagesJson.startsWith('http') || imagesJson.startsWith('data:image'))) {
-      return [imagesJson];
-    }
-    return [];
   }
+  return [];
 };
 
 // Helper function to check if string is a URL, gradient class, or Base64

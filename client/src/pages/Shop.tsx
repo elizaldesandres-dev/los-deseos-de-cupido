@@ -37,19 +37,28 @@ const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1585336261022-680e295ce
 
 const getFirstImage = (imagesJson: string): string => {
   try {
+    // Intentar parsear como JSON array
     const images = JSON.parse(imagesJson);
     if (Array.isArray(images) && images.length > 0) {
       const firstImage = images[0];
-      // Si es una URL o Base64, devolverla; si no, usar DEFAULT_IMAGE
-      return (firstImage.startsWith("http") || firstImage.startsWith("data:image")) ? firstImage : DEFAULT_IMAGE;
+      // Validar que sea una URL o Base64 válida
+      if (typeof firstImage === 'string' && (firstImage.startsWith("http") || firstImage.startsWith("data:image"))) {
+        return firstImage;
+      }
     }
-    return DEFAULT_IMAGE;
-  } catch {
-    return DEFAULT_IMAGE;
+  } catch (e) {
+    // Si no es JSON, intentar usar directamente como URL/Base64
+    if (typeof imagesJson === 'string' && (imagesJson.startsWith("http") || imagesJson.startsWith("data:image"))) {
+      return imagesJson;
+    }
   }
+  return DEFAULT_IMAGE;
 };
 
-const isImageUrl = (str: string): boolean => str.startsWith("http") || str.startsWith("/") || str.startsWith("data:image");
+const isImageUrl = (str: string): boolean => {
+  if (!str || typeof str !== 'string') return false;
+  return str.startsWith("http") || str.startsWith("/") || str.startsWith("data:image");
+};
 
 export default function Shop() {
   const { addToCart, totalItems } = useCart();
