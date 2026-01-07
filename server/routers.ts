@@ -159,7 +159,7 @@ export const appRouter = router({
       return { success: true };
     }),
 
-    // Admin: Upload image to S3
+    // Admin: Upload image (returns base64 data URL)
     uploadImage: adminProcedure
       .input(
         z.object({
@@ -169,19 +169,8 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        // Decode base64
-        const buffer = Buffer.from(input.fileData, "base64");
-        
-        // Generate unique key
-        const fileExtension = input.fileName.split(".").pop() || "jpg";
-        const uniqueKey = `products/${nanoid()}.${fileExtension}`;
-        
-        // Upload to S3
-        const { url } = await storagePut(uniqueKey, buffer, input.mimeType);
-        
-        return { url, key: uniqueKey };
+        // For now, we'll just return the data URL to be stored in the database
+        // This avoids dependency on external storage like S3
+        const dataUrl = `data:${input.mimeType};base64,${input.fileData}`;
+        return { url: dataUrl, key: input.fileName };
       }),
-  }),
-});
-
-export type AppRouter = typeof appRouter;

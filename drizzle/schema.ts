@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, longtext } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -35,7 +35,7 @@ export const products = mysqlTable("products", {
   price: int("price").notNull(), // Price in cents to avoid floating point issues
   rating: int("rating").default(5).notNull(),
   reviews: int("reviews").default(0).notNull(),
-  images: text("images").notNull(), // JSON array of S3 URLs or local paths
+  images: longtext("images").notNull(), // JSON array of Base64 images or URLs
   tag: varchar("tag", { length: 50 }), // Optional tag like "Best Seller", "New", etc.
   description: text("description"), // Optional detailed description
   stock: int("stock").default(0).notNull(), // Inventory count
