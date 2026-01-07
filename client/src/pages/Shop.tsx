@@ -38,13 +38,18 @@ const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1585336261022-680e295ce
 const getFirstImage = (imagesJson: string): string => {
   try {
     const images = JSON.parse(imagesJson);
-    return Array.isArray(images) && images.length > 0 ? images[0] : DEFAULT_IMAGE;
+    if (Array.isArray(images) && images.length > 0) {
+      const firstImage = images[0];
+      // Si es una URL o Base64, devolverla; si no, usar DEFAULT_IMAGE
+      return (firstImage.startsWith("http") || firstImage.startsWith("data:image")) ? firstImage : DEFAULT_IMAGE;
+    }
+    return DEFAULT_IMAGE;
   } catch {
     return DEFAULT_IMAGE;
   }
 };
 
-const isImageUrl = (str: string): boolean => str.startsWith("http") || str.startsWith("/");
+const isImageUrl = (str: string): boolean => str.startsWith("http") || str.startsWith("/") || str.startsWith("data:image");
 
 export default function Shop() {
   const { addToCart, totalItems } = useCart();

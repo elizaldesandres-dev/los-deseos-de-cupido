@@ -24,15 +24,27 @@ const categoryLabels = {
 const parseImages = (imagesJson: string): string[] => {
   try {
     const images = JSON.parse(imagesJson);
-    return Array.isArray(images) ? images : [imagesJson];
+    if (Array.isArray(images)) {
+      // Filtrar imágenes válidas (URLs o Base64)
+      return images.filter(img => img && (img.startsWith('http') || img.startsWith('data:image')));
+    }
+    // Si es una URL o Base64 válida, devolverla
+    if (imagesJson && (imagesJson.startsWith('http') || imagesJson.startsWith('data:image'))) {
+      return [imagesJson];
+    }
+    return [];
   } catch {
-    return [imagesJson];
+    // Si es una URL o Base64 válida, devolverla
+    if (imagesJson && (imagesJson.startsWith('http') || imagesJson.startsWith('data:image'))) {
+      return [imagesJson];
+    }
+    return [];
   }
 };
 
-// Helper function to check if string is a URL or gradient class
+// Helper function to check if string is a URL, gradient class, or Base64
 const isImageUrl = (image: string): boolean => {
-  return image.startsWith('http') || image.startsWith('/');
+  return image.startsWith('http') || image.startsWith('/') || image.startsWith('data:image');
 };
 
 export default function ProductDetail() {
