@@ -117,7 +117,7 @@ export default function AdminProductList({ onEdit, onCreate }: AdminProductListP
                   <TableRow key={product.id}>
                     <TableCell>
                       <div className="w-12 h-12 rounded overflow-hidden bg-neutral-900">
-                        {firstImage && (firstImage.startsWith("http") || firstImage.startsWith("/")) ? (
+                        {firstImage && (firstImage.startsWith("http") || firstImage.startsWith("/") || firstImage.startsWith("data:")) ? (
                           <img
                             src={firstImage}
                             alt={product.name}
