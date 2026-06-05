@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1767415793103,
+      "tag": "0000_boring_johnny_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1767416042494,
+      "tag": "0001_short_tattoo",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1767512674052,
+      "tag": "0002_amused_marvel_boy",
+      "breakpoints": true
+    }
+  ]
+}
