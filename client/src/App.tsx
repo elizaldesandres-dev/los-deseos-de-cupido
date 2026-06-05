@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Shop from "./pages/Shop";
 import Admin from "./pages/Admin";
+import Login from "./pages/Login";
 import { AnimatePresence, motion } from "framer-motion";
 function Router() {
   const [location] = useLocation();
@@ -29,6 +30,11 @@ function Router() {
         <Route path="/tienda">
           <PageWrapper>
             <Shop />
+          </PageWrapper>
+        </Route>
+        <Route path="/login">
+          <PageWrapper>
+            <Login />
           </PageWrapper>
         </Route>
         <Route path="/admin">

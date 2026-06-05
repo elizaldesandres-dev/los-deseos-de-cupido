@@ -1,7 +1,7 @@
 export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
-// Generate login URL for GitHub OAuth
+// Local login page route
 export const getLoginUrl = () => {
-  // Redirect to our GitHub OAuth login endpoint
-  return `${window.location.origin}/api/oauth/github/login`;
+  // Redirect to our local login page
+  return `${window.location.origin}/login`;
 };
