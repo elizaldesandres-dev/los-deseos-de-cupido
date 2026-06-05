@@ -1,163 +1,173 @@
-import { COOKIE_NAME } from "@shared/const";
-import { getSessionCookieOptions } from "./_core/cookies";
-import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router, adminProcedure } from "./_core/trpc";
-import { getAllProducts, getActiveProducts, getProductById, createProduct, updateProduct, deleteProduct } from "./db";
-import { storagePut } from "./storage";
-import { sendOrderInvoice, sendCustomerConfirmation, type OrderData } from "./email";
 import { z } from "zod";
-import { nanoid } from "nanoid";
+import { adminProcedure, publicProcedure, t } from "./_core/trpc";
+import { db } from "./db";
+import { 
+  invitations, 
+  wishes, 
+  confirmations, 
+  gallery, 
+  analytics, 
+  settings, 
+  admins 
+} from "../drizzle/schema";
+import { eq, desc, sql } from "drizzle-orm";
 
-export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
-  system: systemRouter,
-  auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
-    logout: publicProcedure.mutation(({ ctx }) => {
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-      return {
-        success: true,
-      } as const;
-    }),
+export const appRouter = t.router({
+  // Public procedures
+  getInvitations: publicProcedure.query(async () => {
+    return await db.select().from(invitations);
   }),
 
-  // Orders router for handling checkout and invoice emails
-  orders: router({
-    // Public: Submit order and send invoice email
-    submit: publicProcedure
+  getWishes: publicProcedure.query(async () => {
+    return await db.select().from(wishes).orderBy(desc(wishes.createdAt));
+  }),
+
+  getGallery: publicProcedure.query(async () => {
+    return await db.select().from(gallery).orderBy(desc(gallery.createdAt));
+  }),
+
+  getSettings: publicProcedure.query(async () => {
+    const results = await db.select().from(settings);
+    return results[0] || null;
+  }),
+
+  submitWish: publicProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+        content: z.string().min(1),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await db.insert(wishes).values({
+        name: input.name,
+        content: input.content,
+      });
+    }),
+
+  submitConfirmation: publicProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+        attending: z.boolean(),
+        guests: z.number().min(1),
+        message: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await db.insert(confirmations).values({
+        name: input.name,
+        attending: input.attending,
+        guests: input.guests,
+        message: input.message,
+      });
+    }),
+
+  recordVisit: publicProcedure
+    .input(
+      z.object({
+        page: z.string(),
+        referrer: z.string().optional(),
+        device: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await db.insert(analytics).values({
+        page: input.page,
+        referrer: input.referrer,
+        device: input.device,
+      });
+    }),
+
+  // Admin procedures
+  admin: t.router({
+    getConfirmations: adminProcedure.query(async () => {
+      return await db.select().from(confirmations).orderBy(desc(confirmations.createdAt));
+    }),
+
+    getAnalytics: adminProcedure.query(async () => {
+      return await db.select().from(analytics).orderBy(desc(analytics.createdAt));
+    }),
+
+    updateSettings: adminProcedure
       .input(
         z.object({
-          items: z.array(
-            z.object({
-              name: z.string(),
-              quantity: z.number().int().positive(),
-              price: z.number().positive(),
-            })
-          ).min(1),
-          shipping: z.object({
-            fullName: z.string().min(1),
-            email: z.string().email(),
-            phone: z.string().min(1),
-            document: z.string().min(1),
-            address: z.string().min(1),
-            city: z.string().min(1),
-            postalCode: z.string().optional(),
-            additionalInfo: z.string().optional(),
-          }),
-          totalPrice: z.number().positive(),
+          eventDate: z.string().optional(),
+          eventLocation: z.string().optional(),
+          welcomeMessage: z.string().optional(),
+          contactEmail: z.string().optional(),
         })
       )
       .mutation(async ({ input }) => {
-        // Generate order number
-        const orderNumber = `CUP-${Date.now().toString(36).toUpperCase()}-${nanoid(4).toUpperCase()}`;
-        
-        // Format date
-        const orderDate = new Date().toLocaleString("es-CO", {
-          dateStyle: "full",
-          timeStyle: "short",
-          timeZone: "America/Bogota",
+        const existing = await db.select().from(settings).limit(1);
+        if (existing.length > 0) {
+          return await db
+            .update(settings)
+            .set(input)
+            .where(eq(settings.id, existing[0].id));
+        } else {
+          return await db.insert(settings).values(input);
+        }
+      }),
+
+    addGalleryItem: adminProcedure
+      .input(
+        z.object({
+          url: z.string().url(),
+          caption: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return await db.insert(gallery).values({
+          url: input.url,
+          caption: input.caption,
         });
-
-        const orderData: OrderData = {
-          items: input.items,
-          shipping: input.shipping,
-          totalPrice: input.totalPrice,
-          orderNumber,
-          orderDate,
-        };
-
-        // Send invoice to owner email (angelajaramillo828@gmail.com)
-        const ownerEmailSent = await sendOrderInvoice(orderData);
-        
-        // Send confirmation to customer
-        const customerEmailSent = await sendCustomerConfirmation(orderData);
-
-        console.log(`[Orders] Order ${orderNumber} processed. Owner email: ${ownerEmailSent}, Customer email: ${customerEmailSent}`);
-
-        return {
-          success: true,
-          orderNumber,
-          orderDate,
-          emailSent: ownerEmailSent,
-          customerEmailSent,
-        };
       }),
-  }),
 
-  products: router({
-    // Public: Get all active products for shop
-    list: publicProcedure.query(async () => {
-      return await getActiveProducts();
-    }),
+    deleteGalleryItem: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return await db.delete(gallery).where(eq(gallery.id, input.id));
+      }),
 
-    // Admin: Get all products (including inactive)
-    listAll: adminProcedure.query(async () => {
-      return await getAllProducts();
-    }),
-
-    // Admin: Get single product by ID
-    getById: adminProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
-      return await getProductById(input.id);
-    }),
-
-    // Admin: Create new product
-    create: adminProcedure
+    addInvitation: adminProcedure
       .input(
         z.object({
-          name: z.string().min(1),
-          category: z.enum(["toys", "lingerie", "oils", "kits"]),
-          price: z.number().int().positive(),
-          rating: z.number().int().min(1).max(5).default(5),
-          reviews: z.number().int().min(0).default(0),
-          images: z.array(z.string().min(1)).min(1),
-          tag: z.string().nullable().optional(),
-          description: z.string().nullable().optional(),
-          stock: z.number().int().min(0).default(0),
-          active: z.number().int().min(0).max(1).default(1),
+          code: z.string().min(1),
+          maxGuests: z.number().min(1),
+          notes: z.string().optional(),
         })
       )
       .mutation(async ({ input }) => {
-        const productData = {
-          ...input,
-          images: JSON.stringify(input.images),
-        };
-        const productId = await createProduct(productData);
-        return { id: productId, success: true };
+        return await db.insert(invitations).values({
+          code: input.code,
+          maxGuests: input.maxGuests,
+          notes: input.notes,
+        });
       }),
 
-    // Admin: Update existing product
-    update: adminProcedure
-      .input(
-        z.object({
-          id: z.number(),
-          name: z.string().min(1).optional(),
-          category: z.enum(["toys", "lingerie", "oils", "kits"]).optional(),
-          price: z.number().int().positive().optional(),
-          rating: z.number().int().min(1).max(5).optional(),
-          reviews: z.number().int().min(0).optional(),
-          images: z.array(z.string().min(1)).min(1).optional(),
-          tag: z.string().nullable().optional(),
-          description: z.string().nullable().optional(),
-          stock: z.number().int().min(0).optional(),
-          active: z.number().int().min(0).max(1).optional(),
-        })
-      )
+    deleteInvitation: adminProcedure
+      .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
-        const { id, ...data } = input;
-        const processedData = {
-          ...data,
-          images: data.images ? JSON.stringify(data.images) : undefined,
-        };
-        await updateProduct(id, processedData);
-        return { success: true };
+        return await db.delete(invitations).where(eq(invitations.id, input.id));
       }),
 
-    // Admin: Delete product
-    delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
-      await deleteProduct(input.id);
-      return { success: true };
+    deleteWish: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return await db.delete(wishes).where(eq(wishes.id, input.id));
+      }),
+
+    // Admin management
+    getAdmins: adminProcedure.query(async () => {
+      return await db.select().from(admins);
     }),
+
+    deleteAdmin: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return await db.delete(admins).where(eq(admins.id, input.id));
+      }),
 
     // Admin: Upload image (returns base64 data URL)
     uploadImage: adminProcedure
@@ -177,6 +187,4 @@ export const appRouter = router({
   }),
 });
 
-
 export type AppRouter = typeof appRouter;
-
