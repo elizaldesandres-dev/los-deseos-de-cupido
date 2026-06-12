@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 type ViewMode = "list" | "create" | "edit";
 
 export default function Admin() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated } = useAuth({ redirectOnUnauthenticated: true });
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [editingProductId, setEditingProductId] = useState<number | undefined>();
 
