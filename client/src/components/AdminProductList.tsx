@@ -30,6 +30,7 @@ interface AdminProductListProps {
 
 export default function AdminProductList({ onEdit, onCreate }: AdminProductListProps) {
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
   const utils = trpc.useUtils();
 
   const { data: products, isLoading } = trpc.products.listAll.useQuery();
@@ -70,6 +71,11 @@ export default function AdminProductList({ onEdit, onCreate }: AdminProductListP
     }
   };
 
+  const filtered = products?.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    getCategoryLabel(p.category).toLowerCase().includes(search.toLowerCase())
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -77,13 +83,6 @@ export default function AdminProductList({ onEdit, onCreate }: AdminProductListP
       </div>
     );
   }
-
-  const [search, setSearch] = useState("");
-
-  const filtered = products?.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    getCategoryLabel(p.category).toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <div className="space-y-4">
