@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure, adminProcedure } from "./_core/trpc";
+import { router, publicProcedure, adminProcedure, protectedProcedure } from "./_core/trpc";
 import {
   getAllProducts,
   getActiveProducts,
@@ -8,8 +8,22 @@ import {
   updateProduct,
   deleteProduct,
 } from "./db";
+import { COOKIE_NAME } from "@shared/const";
+import { getSessionCookieOptions } from "./_core/cookies";
 
 export const appRouter = router({
+  auth: router({
+    me: publicProcedure.query(({ ctx }) => {
+      return ctx.user ?? null;
+    }),
+
+    logout: protectedProcedure.mutation(({ ctx }) => {
+      const cookieOptions = getSessionCookieOptions(ctx.req);
+      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+      return { success: true };
+    }),
+  }),
+
   products: router({
     list: publicProcedure.query(async () => {
       return await getActiveProducts();

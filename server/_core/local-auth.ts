@@ -5,7 +5,7 @@ import { sdk } from "./sdk";
 import * as db from "../db";
 
 // Fixed credentials
-const ADMIN_USERNAME = "AngelaManager2026";
+const ADMIN_USERNAME = "Angelamanager2026";
 const ADMIN_PASSWORD = "Nose@metiche777*";
 
 /**
