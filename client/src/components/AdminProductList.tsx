@@ -78,17 +78,33 @@ export default function AdminProductList({ onEdit, onCreate }: AdminProductListP
     );
   }
 
+  const [search, setSearch] = useState("");
+
+  const filtered = products?.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    getCategoryLabel(p.category).toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Gestión de Productos</h2>
-        <Button onClick={onCreate}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nuevo Producto
-        </Button>
+      <div className="flex justify-between items-center gap-4">
+        <h2 className="text-2xl font-bold whitespace-nowrap">Gestión de Productos</h2>
+        <div className="flex items-center gap-3 flex-1 justify-end">
+          <input
+            type="text"
+            placeholder="Buscar producto o categoría..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="border rounded-lg px-3 py-2 text-sm w-64 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <Button onClick={onCreate}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nuevo Producto
+          </Button>
+        </div>
       </div>
 
-      {!products || products.length === 0 ? (
+      {!filtered || filtered.length === 0 ? (
         <div className="text-center py-12 border border-dashed rounded-lg">
           <p className="text-muted-foreground mb-4">No hay productos registrados</p>
           <Button onClick={onCreate}>
@@ -111,7 +127,7 @@ export default function AdminProductList({ onEdit, onCreate }: AdminProductListP
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => {
+              {filtered.map((product) => {
                 const firstImage = getFirstImage(product.images);
                 return (
                   <TableRow key={product.id}>
@@ -130,7 +146,7 @@ export default function AdminProductList({ onEdit, onCreate }: AdminProductListP
                     </TableCell>
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>{getCategoryLabel(product.category)}</TableCell>
-                    <TableCell>${(product.price / 100).toLocaleString('es-CO')}</TableCell>
+                    <TableCell>${product.price.toLocaleString('es-CO')}</TableCell>
                     <TableCell>{product.stock}</TableCell>
                     <TableCell>
                       <Badge variant={product.active === 1 ? "default" : "secondary"}>

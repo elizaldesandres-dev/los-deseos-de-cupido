@@ -65,7 +65,7 @@ export default function AdminProductForm({ productId, onSuccess, onCancel }: Adm
       setFormData({
         name: existingProduct.name,
         category: existingProduct.category,
-        price: (existingProduct.price / 100).toString(),
+        price: existingProduct.price.toString(),
         rating: existingProduct.rating.toString(),
         reviews: existingProduct.reviews.toString(),
         images: images.slice(0, 5),
@@ -184,7 +184,7 @@ export default function AdminProductForm({ productId, onSuccess, onCancel }: Adm
     const productData = {
       name: formData.name,
       category: formData.category,
-      price: Math.round(parseFloat(formData.price) * 100), // Convert to cents
+      price: Math.round(parseFloat(formData.price)),
       rating: parseInt(formData.rating),
       reviews: parseInt(formData.reviews),
       images: imageUrls,
